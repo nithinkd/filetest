@@ -12,22 +12,31 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-     console.log('File filter checking:', {
-        file: file,
-        category: req.body.category,
-        extension: path.extname(file.originalname).toLowerCase()
-    });
+    console.log('Full request body:', req.body);  // Debug log
     const ext = path.extname(file.originalname).toLowerCase();
+    
+    // Access category from FormData
     const category = req.body.category;
     
+    console.log('Processing file:', {
+        category: category,
+        extension: ext,
+        originalName: file.originalname
+    });
+
     const allowedTypes = {
-        '3D_Models': ['.step'],
+        '3D_Models': ['.step', '.stp'],
         '2D_Drawings': ['.pdf', '.dxf'],
-        'Artwork': ['.cdr', '.ai', '.psd'],
+        'Artwork': ['.cdr', '.ai', '.psd', '.pdf'],
         'Images': ['.jpeg', '.jpg', '.png'],
         'Documents': ['.doc', '.docx', '.pdf'],
-        'Vendor_Data': ['.txt']
+        'Vendor_Data': ['.txt', '.pdf']
     };
+
+    // If category isn't available yet, accept the file and validate later
+    if (!category) {
+        return cb(null, true);
+    }
 
     if (!allowedTypes[category]?.includes(ext)) {
         return cb(new Error(`Invalid file type for ${category}`));
@@ -42,7 +51,5 @@ const upload = multer({
         fileSize: 50 * 1024 * 1024 // 50MB limit
     }
 });
-
-
 
 module.exports = upload;

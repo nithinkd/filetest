@@ -6,7 +6,15 @@ const userRoutes = require('./routes/userRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const { createInitialAdmin } = require('./controllers/authController');
 const componentRoutes = require('./routes/componentRoutes');
+console.log('Registering routes...');
 const fileRoutes = require('./routes/fileRoutes');
+// In server.js
+
+// Add these lines to check if routes are being registered
+
+
+
+
 const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = 'your-secret-key';
@@ -50,6 +58,9 @@ app.use('/api/projects/:projectId/components', auth, componentRoutes);
 // Add this line after your middleware setup
 app.use('/uploads', express.static('uploads'));
 app.use('/api/projects/:projectId/components/:componentId/files', auth, fileRoutes);
+console.log('Routes registered');
+
+
 
 // Create initial admin user
 createInitialAdmin();

@@ -32,23 +32,19 @@ function FileUpload({ componentId, projectId, onFileUploaded }) {
 
     const handleUpload = async (e) => {
         e.preventDefault();
-        if (!selectedFile) {
-            setError('Please select a file');
-            return;
-        }
-
-        setLoading(true);
+        setLoading(true); // Set loading state when upload starts
+        
         const formData = new FormData();
-        formData.append('file', selectedFile);
         formData.append('category', selectedCategory);
-
+        formData.append('file', selectedFile);
+    
         try {
             const token = localStorage.getItem('token');
             await axios.post(
                 `http://localhost:5001/api/projects/${projectId}/components/${componentId}/files`,
                 formData,
                 {
-                    headers: {
+                    headers: { 
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'multipart/form-data'
                     }
@@ -56,11 +52,11 @@ function FileUpload({ componentId, projectId, onFileUploaded }) {
             );
             onFileUploaded();
             setSelectedFile(null);
-            setError('');
         } catch (error) {
+            console.error('Upload error:', error);
             setError(error.response?.data?.message || 'Error uploading file');
         } finally {
-            setLoading(false);
+            setLoading(false); // Reset loading state when upload completes
         }
     };
 

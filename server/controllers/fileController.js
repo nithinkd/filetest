@@ -49,16 +49,25 @@ const downloadFile = async (req, res) => {
     try {
         const { componentId, fileId } = req.params;
         
+        console.log('Download request for:', { componentId, fileId }); // Debug log
+        
         const component = await Component.findById(componentId);
-        const file = component.files.id(fileId);
+        if (!component) {
+            return res.status(404).json({ message: 'Component not found' });
+        }
 
+        const file = component.files.id(fileId);
         if (!file) {
             return res.status(404).json({ message: 'File not found' });
         }
 
+        console.log('File found:', file); // Debug log
+        
+        // Send the file
         res.download(file.path, file.originalName);
     } catch (error) {
-        res.status(500).json({ message: error.message }); // Fixed this line
+        console.error('Download error:', error);
+        res.status(500).json({ message: error.message });
     }
 };
 
